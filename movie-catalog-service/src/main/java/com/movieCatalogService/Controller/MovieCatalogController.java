@@ -3,6 +3,7 @@ package com.movieCatalogService.Controller;
 import com.movieCatalogService.Models.CatalogItem;
 import com.movieCatalogService.Models.Movie;
 import com.movieCatalogService.Models.Rating;
+import com.movieCatalogService.Models.UserRatings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,23 +25,22 @@ public class MovieCatalogController {
     private WebClient.Builder builder;
     @RequestMapping("/catalog/{userId}")
     public List<CatalogItem> getCatalog(@PathVariable String userId){
-        List<Rating> ratings= Arrays.asList(
-                new Rating("1234",4),
-                new Rating("56789",5)
-        );
+        UserRatings ratings= restTemplate.getForObject("http://localhost:9093/ratingsdata/users/"+userId, UserRatings.class);
 
-        return ratings.stream().map(rating -> {
-//            Movie movie = restTemplate.getForObject("http://localhost:9091/movies/"+rating.getMovieId(), Movie.class);
-
-            //Alternative way Webclient:Reactive Programming:asynchronous
-            Movie movie = builder.build().get()
-                    .uri("http://localhost:9091/movies/" + rating.getMovieId())
-                    .retrieve()
-                    .bodyToMono(Movie.class)
-                    .block();
+        return ratings.getUserRatings().stream().map(rating -> {
+            //For Each Movie Id ,call movie info Service and get details
+            Movie movie = restTemplate.getForObject("http://localhost:9091/movies/"+rating.getMovieId(), Movie.class);
+            //Put them all together
             return  CatalogItem.builder().name(movie.getName()).desc("Description").rating(rating.getRating()).build();
         }).collect(Collectors.toList());
 
 
     }
 }
+
+//Alternative way Webclient:Reactive Programming:asynchronous
+//            Movie movie = builder.build().get()
+//                    .uri("http://localhost:9091/movies/" + rating.getMovieId())
+//                    .retrieve()
+//                    .bodyToMono(Movie.class)
+//                    .block();
