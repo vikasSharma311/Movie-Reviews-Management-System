@@ -1,7 +1,7 @@
 
 # Movie-Reviews-Management System
 
-his project improved microservices communication by replacing hardcoded URLs with service discovery via Eureka server. Developed in Spring Boot using Spring Cloud, it utilized client-side service discovery and load balancing to enhance flexibility, scalability, fault tolerance, and resource optimization in the microservices architecture.
+Implemented service discovery via Eureka server to facilitate seamless communication among three interconnected microservices: movieCatalogService, movieInfoService, and RatingDataService. Developed using Spring Boot and Spring Cloud, the project enhanced flexibility, scalability, fault tolerance, and resource optimization in the microservices architecture.
 
 
 
